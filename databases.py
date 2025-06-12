@@ -25,9 +25,13 @@ name = input("Enter your name: ") # Justas"; Drop Table Users
 age = int(input("Enter your age: "))
 # Insert sample data
 # cursor.execute(f'Insert into Users (name, age) Values("{name}", "{age}")') # Justas"; Drop Table Users;
-cursor.execute("INSERT INTO users (name, age) VALUES (?, ?)", (name,))
-conn.commit()  # Išsaugok pakeitimus
+# cursor.execute("INSERT INTO users (name, age) VALUES (?, ?)", (name, age))
+# cursor.execute("INSERT INTO users (name, age) VALUES (:vardas, :amzius)", {'amzius': age,'vardas': name}) # Naudojant žodyną, kad būtų saugiau nuo SQL injekcijų
 
+with conn:
+    cursor.execute("INSERT INTO users (name, age) VALUES (:vardas, :amzius)", {'amzius': age,'vardas': name}) # Naudojant žodyną, kad būtų saugiau nuo SQL injekcijų
+    input("Paspausk Enter, kad įrašas būtų pridėtas...") # Palauk, kol vartotojas paspaus Enter
+# galima isivaizduoti, kad pabaigus with conn atitraukima yra padaroma conn.commit() (taip pat dalinai yra padaroma ir conn.close())
 cursor.execute("SELECT * FROM users")
 rows = cursor.fetchall()  # Gauk visus įrašus iš lentelės
 print(rows) # rows yra sarašo pavidalu, kuriame yra visi įrašai kaip tuples
@@ -36,3 +40,5 @@ for row in rows:
     print(f"ID: {row[0]}, Name: {row[1]}, Age: {row[2]}")
 # Close the connection
 conn.close()  # Uždaryk duomenų bazės ryšį
+
+
